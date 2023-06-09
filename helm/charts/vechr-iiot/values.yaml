@@ -79,21 +79,6 @@ ingress:
         
 ############################################################ Config for Common ############################################################
 common:
-  # You can use custom kubernetes postgres here, or you can use postgresql (using bitnami postgresql)
-  postgres:
-    # - 
-    #   name: "vechr"
-    #   externalPort: 5432
-    #   enabled: true
-
-    #   env:
-    #     - name: POSTGRES_DB
-    #       value: "postgres"
-    #     - name: POSTGRES_USER
-    #       value: Vechr
-    #     - name: POSTGRES_PASSWORD
-    #       value: "123"
-
   frontend:
     name: web-app
     image: zulfikar4568/web-app
