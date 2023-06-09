@@ -1,13 +1,30 @@
-<img width="2487" alt="Screen Shot 2020-10-12 at 4 59 32 PM" src="https://raw.githubusercontent.com/vechr/k8s/master/images/vechrk8s.svg">
-<br>
+<p align="center">
+  <a href="" target="blank"><img src="https://raw.githubusercontent.com/vechr/k8s/master/images/vechrk8s.svg" width="1000" alt="Vechr k8s" /></a>
+  <br>
+  <i>Vehcr IIoT is platfom SaaS to help productivity in manufacturing through Technology
+    <br> Running in Kubernetes Engine, it can be cloud or on premises.</i>
+  <br>
+</p>
 
-![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)
-[![Licence](https://img.shields.io/github/license/vechr/k8s?style=for-the-badge)](./LICENSE)
+<p align="center">
+  <a href="https://github.com/vechr/k8s/issues">Submit an Issue</a>
+  <br>
+  <br>
+</p>
+
+<p align="center">
+  <a href="https://artifacthub.io/packages/search?repo=vechr">
+    <img alt="Artifact Hub" src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/vechr">
+  </a>
+  <a href="https://raw.githubusercontent.com/vechr/k8s/master/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/vechr/k8s">
+  </a>
+</p>
 
 
 ## Getting started with NATS using Helm
 
-In this repo you can find the Helm 3 based [charts](https://github.com/nats-io/k8s/tree/main/helm/charts) to install Vechr.
+In this repo you can find the Helm 3 based [charts](https://github.com/vechr/k8s/tree/master/helm/charts) to install Vechr.
 
 ```sh
 > helm repo add vechr https://vechr.github.io/k8s/helm/charts/
@@ -17,5 +34,6 @@ In this repo you can find the Helm 3 based [charts](https://github.com/nats-io/k
 NAME          	URL 
 vechr          	https://vechr.github.io/k8s/helm/charts/
 
-> helm install production vechr/vechr-iiot
+# Example install vechr iiot chart
+> helm install vechr-production vechr/vechr-iiot
 ```
