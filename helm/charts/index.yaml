@@ -3,7 +3,7 @@ entries:
   vechr-iiot:
   - apiVersion: v2
     appVersion: 0.0.1
-    created: "2023-06-09T22:00:47.199474+07:00"
+    created: "2023-06-09T22:35:04.951248+07:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -18,7 +18,7 @@ entries:
       repository: https://charts.bitnami.com/bitnami
       version: 12.1.6
     description: Helm Chart for Vechr Kubernetes
-    digest: 1c063a5c08c4cd5ab0358381e46782a059c9bd545bd82931d5056c080eb4ce6a
+    digest: 8abbc4aa7a169de3c389c5817c53fe1341db51445a4419907691b6c8971bb2b1
     home: https://github.com/vechr/k8s
     icon: https://raw.githubusercontent.com/vechr/k8s/master/images/vechrk8s.svg
     keywords:
@@ -28,9 +28,9 @@ entries:
     - email: isnaen70@gmail.com
       name: zulfikar
       url: https://github.com/zulfikar4568
-    name: vechr
+    name: vechr-iiot
     type: application
     urls:
-    - vechr-0.0.1.tgz
+    - https://github.com/vechr/k8s/releases/download/vechr-iiot-0.0.1/vechr-iiot-0.0.1.tgz
     version: 0.0.1
-generated: "2023-06-09T22:00:47.191891+07:00"
+generated: "2023-06-09T22:35:04.944034+07:00"
