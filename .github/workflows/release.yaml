@@ -40,4 +40,4 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@master
         with:
-          args: 'Project {{ EVENT_PAYLOAD.repository.full_name }} release helm charts successfully. https://artifacthub.io/packages/helm/vechr/vechr'
+          args: 'Project {{ EVENT_PAYLOAD.repository.full_name }} release helm charts successfully. https://artifacthub.io/packages/helm/vechr/vechr-iiot'
