@@ -22,12 +22,12 @@ helm install \
 
 Install Vehcr IIoT application
 ```sh
-> helm repo add vechr https://vechr.github.io/k8s/helm/charts/
+> helm repo add vechr https://helm.vechr.com/helm/charts/
 > helm repo update
 
 > helm repo list
 NAME          	URL 
-vechr          	https://vechr.github.io/k8s/helm/charts/
+vechr          	https://helm.vechr.com/helm/charts/
 
 > helm install vechr-production vechr/vechr-iiot
 ```
