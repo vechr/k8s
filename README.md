@@ -27,12 +27,12 @@
 In this repo you can find the Helm 3 based [charts](https://github.com/vechr/k8s/tree/master/helm/charts) to install Vechr.
 
 ```sh
-> helm repo add vechr https://vechr.github.io/k8s/helm/charts/
+> helm repo add vechr https://helm.vechr.com/k8s/helm/charts/
 > helm repo update
 
 > helm repo list
 NAME          	URL 
-vechr          	https://vechr.github.io/k8s/helm/charts/
+vechr          	https://helm.vechr.com/k8s/helm/charts/
 
 # Example install vechr iiot chart
 > helm install vechr-production vechr/vechr-iiot
