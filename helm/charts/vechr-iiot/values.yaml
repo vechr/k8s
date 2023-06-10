@@ -81,7 +81,7 @@ ingress:
 common:
   frontend:
     name: web-app
-    image: zulfikar4568/web-app
+    image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/web-app:latest
     tag: latest
     enabled: true
 
@@ -122,7 +122,7 @@ microservices:
   -
     enabled: true
     name: audit-service
-    image: zulfikar4568/audit-service
+    image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/audit-service:latest
     tag: latest
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
@@ -159,7 +159,7 @@ microservices:
   -
     enabled: true
     name: auth-service
-    image: zulfikar4568/auth-service
+    image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/auth-service:latest
     tag: latest
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
@@ -202,7 +202,7 @@ microservices:
   -
     enabled: true
     name: db-logger-service
-    image: zulfikar4568/db-logger-service
+    image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/db-logger-service:latest
     tag: latest
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
@@ -245,7 +245,7 @@ microservices:
   -
     enabled: true
     name: notification-service
-    image: zulfikar4568/notification-service
+    image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/notification-service:latest
     tag: latest
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
@@ -290,7 +290,7 @@ microservices:
   -
     enabled: true
     name: things-service
-    image: zulfikar4568/things-service
+    image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/things-service:latest
     tag: latest
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
