@@ -1,4 +1,19 @@
 {{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+
+{{/* >>>>>>>> This is variable for Influx <<<<<<<<< */}}
+{{$isInfluxInternalEnabled := .Values.influx.enabled}}
+{{$influxName := .Values.influx.name}}
+{{$influxPort := .Values.influx.deployment.port}}
+{{/* >>>>>>>> This is variable for Influx <<<<<<<<< */}}
+
+{{/* >>>>>>>> This is variable for PostgreSQL <<<<<<<<< */}}
+{{$isPostgreInternalEnabled := .Values.postgresql.enabled}}
+{{$postgreUsername := .Values.postgresql.auth.username}}
+{{$postgrePassword := .Values.postgresql.auth.password}}
+{{$postgrePort := .Values.postgresql.containerPorts.postgresql}}
+{{/* >>>>>>>> This is variable for PostgreSQL <<<<<<<<< */}}
+
 {{$secretNameTLS := .Values.natsSelfSigned.secretName}}
 {{range $i, $value := .Values.microservices | default dict}}
 {{if $value.enabled}}
@@ -47,6 +62,30 @@ spec:
               value: "nats://nats-lb.{{$namespace}}.svc.cluster.local:4222"
             - name: APP_PORT
               value: {{$value.externalPort | quote }}
+            {{if $value.influx}}
+            {{if $isInfluxInternalEnabled}}
+            - name: INFLUX_URL
+              value: "http://{{$influxName}}-service.{{$namespace}}.svc.cluster.local:{{$influxPort}}/"
+            {{else}}
+            - name: INFLUX_URL
+              value: "http://{{$value.influx.serviceName}}.{{$namespace}}.svc.cluster.local:{{$value.influx.port}}/"
+            {{end}}
+            {{end}}
+            {{if $value.smtp}}
+            - name: EMAIL_HOST
+              value: "{{$value.smtp.serviceName}}.{{$namespace}}.svc.cluster.local"
+            - name: EMAIL_PORT
+              value: {{$value.smtp.port | quote }}
+            {{end}}
+            {{if $value.db}}
+            {{if $isPostgreInternalEnabled}}
+            - name: DB_URL
+              value: "postgresql://{{$postgreUsername}}:{{$postgrePassword}}@{{$releasename}}-postgresql.{{$namespace}}.svc.cluster.local:{{$postgrePort}}/{{$value.databaseName}}?schema=public&connect_timeout=300"
+            {{else}}
+            - name: DB_URL
+              value: "postgresql://{{$value.db.username}}:{{$value.db.password}}@{{$value.db.serviceName}}.{{$namespace}}.svc.cluster.local:{{$value.db.port}}/{{$value.databaseName}}?schema=public&connect_timeout=300"
+            {{end}}
+            {{end}}
             {{range $i, $env_value := $value.env}}
             - name: {{$env_value.name}}
               value: {{quote $env_value.value}}

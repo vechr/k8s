@@ -1,20 +1,20 @@
-{{if .Values.common.influx.enabled}}
+{{if .Values.influx.enabled}}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ default "influxdb" .Values.common.influx.name }}-service
+  name: {{ default "influxdb" .Values.influx.name }}-service
   namespace: {{ include "vechr.namespace" . }}
   labels:
-    app: {{ default "influxdb" .Values.common.influx.name }}
+    app: {{ default "influxdb" .Values.influx.name }}
 spec:
   type: ClusterIP
   selector:
-    app: {{ default "influxdb" .Values.common.influx.name }}
+    app: {{ default "influxdb" .Values.influx.name }}
   ports:
     - protocol: TCP
       name: http
-      port: {{ default 8086 .Values.common.influx.influx.port }}
+      port: {{ default 8086 .Values.influx.influx.port }}
       targetPort: 8086
 
 {{end}}

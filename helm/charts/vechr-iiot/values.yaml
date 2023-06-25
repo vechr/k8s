@@ -77,45 +77,28 @@ ingress:
           path: /
           port: 80
         
-############################################################ Config for Common ############################################################
-common:
-  frontend:
-    name: web-app
-    image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/web-app
-    tag: latest
-    enabled: true
+############################################################ Config for Frontend ############################################################
+frontend:
+  name: web-app
+  image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/web-app
+  tag: latest
+  enabled: true
 
-    # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
-    imagePullPolicy: Always
+  # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
+  imagePullPolicy: Always
 
-    port: 80
-    externalPort: 80
-    nodePort: 30035
+  port: 80
+  externalPort: 80
+  nodePort: 30035
 
-    # Resource
-    resources:
-      requests:
-        memory: "100Mi"
-        cpu: "100m"
-      limits:
-        memory: "1024Mi"
-        cpu: "1"
-
-  influx:
-    name: influxdb
-    replicas: 2
-    enabled: true
-    deployment:
-      image: influxdb
-      tag: 2.1.0-alpine
-    influx:
-      mode: setup
-      organization: Vechr
-      bucket: Vechr
-      token: vechr-token
-    auth:
-      username: admin
-      password: isnaen1998
+  # Resource
+  resources:
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "1"
 
 ######################################################### Config for Microservices ########################################################
 microservices:
@@ -136,8 +119,15 @@ microservices:
         value: "usersecret"
       - name: JWT_EXPIRES_IN
         value: "3d"
-      - name: DB_URL
-        value: "postgresql://vechrUser:vechr123@vechr-production-postgresql.default.svc.cluster.local:5432/audit_db?schema=public&connect_timeout=300"
+
+    databaseName: audit_db
+
+    # Will not use if enabled the postgresql in below config! IMPORTANT!
+    db:
+      serviceName: postgres-service
+      username: vechrUser
+      password: vechr123
+      port: 5432
 
     externalPort: 3004
     nodePort: 30036
@@ -173,14 +163,21 @@ microservices:
         value: "usersecret"
       - name: JWT_EXPIRES_IN
         value: "3d"
-      - name: DB_URL
-        value: "postgresql://vechrUser:vechr123@vechr-production-postgresql.default.svc.cluster.local:5432/auth_db?schema=public&connect_timeout=300"
       - name: JWT_REFRESH_EXPIRES_IN
         value: "30d"
       - name: INITIAL_SITE
         value: '{"code":"ST1","name":"Site Default","location":"Server Default"}'
       - name: INITIAL_SUPERUSER
         value: '{"fullName":"root","username": "root","emailAddress":"root@vechr.id","phoneNumber":"+62","password":"password123"}'
+
+    databaseName: auth_db
+
+    # Will not use if enabled the postgresql in below config! IMPORTANT!
+    db:
+      serviceName: postgres-service
+      username: vechrUser
+      password: vechr123
+      port: 5432
 
     externalPort: 3005
     nodePort: 30037
@@ -216,14 +213,17 @@ microservices:
         value: "usersecret"
       - name: JWT_EXPIRES_IN
         value: "3d"
-      - name: INFLUX_URL
-        value: "http://influxdb-service.default.svc.cluster.local:8086/"
       - name: INFLUX_TOKEN
         value: "vechr-token"
       - name: INFLUX_ORG
         value: "Vechr"
       - name: INFLUX_BUCKET
         value: "Vechr"
+
+    # Will not use if enabled the influx in below config! IMPORTANT!
+    influx:
+      serviceName: influx-service
+      port: 8086
 
     externalPort: 3003
     nodePort: 30038
@@ -263,12 +263,19 @@ microservices:
         value: isnaen71@gmail.com
       - name: EMAIL_PASS
         value: ofhbzrgtvmzbgrlh
-      - name: EMAIL_HOST
-        value: gmail-service.default.svc.cluster.local
-      - name: EMAIL_PORT
-        value: "587"
-      - name: DB_URL
-        value: "postgresql://vechrUser:vechr123@vechr-production-postgresql.default.svc.cluster.local:5432/notification_db?schema=public&connect_timeout=300"
+
+    smtp:
+      serviceName: gmail-service
+      port: 587
+
+    databaseName: notification_db
+
+    # Will not use if enabled the postgresql in below config! IMPORTANT!
+    db:
+      serviceName: postgres-service
+      username: vechrUser
+      password: vechr123
+      port: 5432
 
     externalPort: 3002
     nodePort: 30039
@@ -304,8 +311,15 @@ microservices:
         value: "usersecret"
       - name: JWT_EXPIRES_IN
         value: "3d"
-      - name: DB_URL
-        value: "postgresql://vechrUser:vechr123@vechr-production-postgresql.default.svc.cluster.local:5432/things_db?schema=public&connect_timeout=300"
+
+    databaseName: things_db
+
+    # Will not use if enabled the postgresql in below config! IMPORTANT!
+    db:
+      serviceName: postgres-service
+      username: vechrUser
+      password: vechr123
+      port: 5432
 
     externalPort: 3001
     nodePort: 30040
@@ -417,17 +431,6 @@ nginx:
 metricsServer:
   enabled: true
 
-################################################## Config for Postgresql (Bitnami) #########################################################
-postgresql:
-  enabled: true
-  auth:
-    postgresPassword: "vechr123"
-    username: "vechrUser"
-    password: "vechr123"
-  
-  containerPorts:
-    postgresql: 5432
-
 ######################################################## Config for CERT MANAGER ###########################################################
 certmanager:
   # Will Override TLS Ingresses in above configuration
@@ -460,3 +463,42 @@ serviceExternal:
       externalName: smtp.gmail.com
       ports:
         - port: 587
+    - name: postgres-service
+      enabled: true
+      externalName: host.docker.internal
+      ports:
+        - port: 5432
+    - name: influx-service
+      enabled: true
+      externalName: host.docker.internal
+      ports:
+        - port: 8086
+
+################################################## Config for Postgresql (Bitnami) #########################################################
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "vechr123"
+    username: "vechrUser"
+    password: "vechr123"
+  
+  containerPorts:
+    postgresql: 5432
+
+################################################## Config for InfluxDB #########################################################
+influx:
+  name: influxdb
+  replicas: 2
+  enabled: true
+  deployment:
+    image: influxdb
+    tag: 2.1.0-alpine
+    port: 8086
+  influx:
+    mode: setup
+    organization: Vechr
+    bucket: Vechr
+    token: vechr-token
+  auth:
+    username: admin
+    password: vehcr123
