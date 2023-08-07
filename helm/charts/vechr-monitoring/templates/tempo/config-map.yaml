@@ -1,0 +1,12 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-tempo
+  namespace: {{$namespace}}
+data:
+  config.yaml: |
+    {{- toYaml .Values.tempo.config | nindent 6}}
+    

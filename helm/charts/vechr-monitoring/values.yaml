@@ -1,0 +1,226 @@
+grafana:
+  enabled: true
+  port: 3000
+  image:
+    name: grafana/grafana
+    tag: latest
+    imagePullPolicy: "Always"
+    restartPolicy: "Always"
+  env:
+    - name: GF_PATHS_PROVISIONING
+      value: /etc/grafana/provisioning
+    - name: GF_AUTH_ANONYMOUS_ENABLED
+      value: true
+    - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+      value: Admin
+
+  # You can find out more information in here
+  # https://grafana.com/docs/grafana/latest/administration/provisioning/#data-sources
+  datasource:
+    apiVersion: 1
+
+    deleteDatasources:
+      - name: Prometheus
+      - name: Tempo
+      - name: Loki
+
+    datasources:
+    - name: Prometheus
+      uid: prometheus
+      type: prometheus
+      access: proxy
+      orgId: 1
+      url: http://prometheus:9090
+      basicAuth: false
+      isDefault: false
+      version: 1
+      editable: false
+    - name: Tempo
+      uid: tempo
+      type: tempo
+      access: proxy
+      orgId: 1
+      url: http://tempo-service.monitoring.svc.cluster.local:3200
+      basicAuth: false
+      isDefault: false
+      version: 1
+      editable: true
+      apiVersion: 1
+      jsonData:
+        tracesToLogsV2:
+          datasourceUid: 'loki'
+          spanStartTimeShift: '-1h'
+          spanEndTimeShift: '1h'
+          tags: [{ key: 'service.name', value: 'application' }]
+          filterByTraceID: true
+          filterBySpanID: true
+        serviceMap:
+          datasourceUid: 'prometheus'
+        nodeGraph:
+          enabled: true
+        search:
+          hide: false
+        lokiSearch:
+          datasourceUid: 'loki'
+        traceQuery:
+          timeShiftEnabled: true
+          spanStartTimeShift: '-1h'
+          spanEndTimeShift: '1h'
+    - name: Loki
+      uid: loki
+      type: loki
+      access: proxy
+      orgId: 1
+      url: "http://loki-service.monitoring.svc.cluster.local:3100"
+      basicAuth: false
+      isDefault: false
+      version: 1
+      editable: false
+      apiVersion: 1
+      jsonData:
+        derivedFields:
+          - datasourceUid: tempo
+            matcherRegex: '"traceId":"([A-Za-z0-9]+)"'
+            name: TraceID
+            url: $${__value.raw}
+
+# you can find more information in here
+# https://grafana.com/docs/loki/latest/configuration/
+loki:
+  enabled: true
+  port: 3100
+  image:
+    name: grafana/loki
+    tag: 2.8.0
+    imagePullPolicy: "Always"
+    restartPolicy: "Always"
+  env:
+    - name: JAEGER_AGENT_HOST
+      value: tempo
+    - name: JAEGER_ENDPOINT
+      value: http://tempo:14268/api/traces
+    - name: JAEGER_SAMPLER_TYPE
+      value: const
+    - name: JAEGER_SAMPLER_PARAM
+      value: 1
+
+  config:
+    auth_enabled: false
+
+    server:
+      http_listen_port: 3100
+      grpc_listen_port: 9096
+
+    common:
+      instance_addr: 127.0.0.1
+      path_prefix: /tmp/loki
+      storage:
+        filesystem:
+          chunks_directory: /tmp/loki/chunks
+          rules_directory: /tmp/loki/rules
+      replication_factor: 1
+      ring:
+        kvstore:
+          store: inmemory
+
+    query_range:
+      results_cache:
+        cache:
+          embedded_cache:
+            enabled: true
+            max_size_mb: 100
+
+    schema_config:
+      configs:
+        - from: 2020-10-24
+          store: boltdb-shipper
+          object_store: filesystem
+          schema: v11
+          index:
+            prefix: index_
+            period: 24h
+
+    ruler:
+      alertmanager_url: http://localhost:9093
+
+tempo:
+  enabled: true
+  image:
+    name: grafana/tempo
+    tag: latest
+    imagePullPolicy: "Always"
+    restartPolicy: "Always"
+  env: []
+  ports:
+    - name: jaeger-ingest
+      containerPort: 14268
+      protocol: TCP
+    - name: jaeger-grpc
+      containerPort: 14250
+      protocol: TCP
+    - name: tempo
+      containerPort: 3200
+      protocol: TCP
+    - name: tempo-grpc
+      containerPort: 9095
+      protocol: TCP
+    - name: otlp-grpc
+      containerPort: 4317
+      protocol: TCP
+    - name: otlp-http
+      containerPort: 4318
+      protocol: TCP
+    - name: zipkin
+      containerPort: 9411
+      protocol: TCP
+
+  # You can find more information in here
+  # https://grafana.com/docs/tempo/latest/configuration/
+  config:
+    server:
+      http_listen_port: 3200
+
+    distributor:
+      receivers:                           # this configuration will listen on all ports and protocols that tempo is capable of.
+        jaeger:                            # the receives all come from the OpenTelemetry collector.  more configuration information can
+          protocols:                       # be found there: https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver
+            thrift_http:                   #
+            grpc:                          # for a production deployment you should only enable the receivers you need!
+            thrift_binary:
+            thrift_compact:
+        zipkin:
+        otlp:
+          protocols:
+            http:
+            grpc:
+        opencensus:
+
+    ingester:
+      max_block_duration: 5m               # cut the headblock when this much time passes. this is being set for demo purposes and should probably be left alone normally
+
+    compactor:
+      compaction:
+        block_retention: 1h                # overall Tempo trace retention. set for demo purposes
+
+    metrics_generator:
+      registry:
+        external_labels:
+          source: tempo
+          cluster: docker-compose
+      storage:
+        path: /tmp/tempo/generator/wal
+        remote_write:
+          - url: http://prometheus:9090/api/v1/write
+            send_exemplars: true
+
+    storage:
+      trace:
+        backend: local                     # backend configuration to use
+        wal:
+          path: /tmp/tempo/wal             # where to store the the wal locally
+        local:
+          path: /tmp/tempo/blocks
+
+    overrides:
+      metrics_generator_processors: [service-graphs, span-metrics] # enables metrics generator
+    

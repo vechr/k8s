@@ -1,0 +1,17 @@
+apiVersion: v2
+appVersion: "0.0.1"
+
+name: vechr-observability
+description: Helm Chart for Vechr Observability Kubernetes
+keywords:
+- Vechr
+- IoT
+
+type: application
+version: 0.0.1
+home: https://github.com/vechr/k8s
+maintainers:
+  - name: zulfikar
+    url: https://github.com/zulfikar4568
+    email: isnaen70@gmail.com
+icon: https://raw.githubusercontent.com/vechr/k8s/master/images/vechrk8s.svg

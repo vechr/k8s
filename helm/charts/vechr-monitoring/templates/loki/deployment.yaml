@@ -1,0 +1,49 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki-{{$releasename}}
+  namespace: {{ $namespace }}
+  labels:
+    svc: vechr-loki-service
+    app: loki-{{$releasename}}-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      svc: vechr-loki-service
+      app: loki-{{$releasename}}-app
+  template:
+    metadata:
+      name: loki-{{$releasename}}
+      labels:
+        svc: vechr-loki-service
+        app: loki-{{$releasename}}-app
+    spec:
+      restartPolicy: {{.Values.loki.image.restartPolicy | default "Always"}}
+      containers:
+        - name: loki-{{$releasename}}
+          image: {{.Values.loki.image.name}}:{{.Values.loki.image.tag}}
+          args: ["-config.file=/etc/loki/config.yaml"]
+          ports:
+            - name: http
+              containerPort: {{.Values.loki.port}}
+              protocol: TCP
+          imagePullPolicy: {{.Values.loki.image.imagePullPolicy | default "Always"}}
+          env:
+            {{range $i, $env_value := .Values.loki.env}}
+            - name: {{$env_value.name}}
+              value: {{quote $env_value.value}}
+            {{end}}
+          volumeMounts:
+          - name: config-loki-volume
+            mountPath: /etc/loki/config.yaml
+            subPath: config.yaml
+
+      volumes:
+        - name: config-loki-volume
+          configMap:
+            name: config-loki
+

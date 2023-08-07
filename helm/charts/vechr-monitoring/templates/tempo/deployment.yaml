@@ -1,0 +1,50 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempo-{{$releasename}}
+  namespace: {{ $namespace }}
+  labels:
+    svc: vechr-tempo-service
+    app: tempo-{{$releasename}}-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      svc: vechr-tempo-service
+      app: tempo-{{$releasename}}-app
+  template:
+    metadata:
+      name: tempo-{{$releasename}}
+      labels:
+        svc: vechr-tempo-service
+        app: tempo-{{$releasename}}-app
+    spec:
+      restartPolicy: {{.Values.tempo.image.restartPolicy | default "Always"}}
+      containers:
+        - name: tempo-{{$releasename}}
+          image: {{.Values.tempo.image.name}}:{{.Values.tempo.image.tag}}
+          args: ["-config.file=/etc/config.yaml"]
+          ports:
+            {{range $i, $port := .Values.tempo.ports}}
+            - name: {{$port.name}}
+              containerPort: {{$port.containerPort}}
+              protocol: {{$port.protocol}}
+            {{end}}
+          imagePullPolicy: {{.Values.tempo.image.imagePullPolicy | default "Always"}}
+          env:
+            {{range $i, $env_value := .Values.tempo.env}}
+            - name: {{$env_value.name}}
+              value: {{quote $env_value.value}}
+            {{end}}
+          volumeMounts:
+          - name: config-tempo-volume
+            mountPath: /etc/config.yaml
+            subPath: config.yaml
+
+      volumes:
+        - name: config-tempo-volume
+          configMap:
+            name: config-tempo

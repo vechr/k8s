@@ -1,0 +1,48 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-{{$releasename}}
+  namespace: {{ $namespace }}
+  labels:
+    svc: vechr-grafana-service
+    app: grafana-{{$releasename}}-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      svc: vechr-grafana-service
+      app: grafana-{{$releasename}}-app
+  template:
+    metadata:
+      name: grafana-{{$releasename}}
+      labels:
+        svc: vechr-grafana-service
+        app: grafana-{{$releasename}}-app
+    spec:
+      restartPolicy: {{.Values.grafana.image.restartPolicy | default "Always"}}
+      containers:
+        - name: grafana-{{$releasename}}
+          image: {{.Values.grafana.image.name}}:{{.Values.grafana.image.tag}}
+          ports:
+            - name: http
+              containerPort: {{.Values.grafana.port}}
+              protocol: TCP
+          imagePullPolicy: {{.Values.grafana.image.imagePullPolicy | default "Always"}}
+          env:
+            {{range $i, $env_value := .Values.grafana.env}}
+            - name: {{$env_value.name}}
+              value: {{quote $env_value.value}}
+            {{end}}
+          volumeMounts:
+          - name: datasource-config-volume
+            mountPath: /etc/grafana/provisioning/datasources/datasource.yaml
+            subPath: datasource.yaml
+
+      volumes:
+        - name: datasource-config-volume
+          configMap:
+            name: datasource-grafana
+
