@@ -8,20 +8,24 @@ metadata:
   name: tempo-{{$releasename}}
   namespace: {{ $namespace }}
   labels:
-    svc: vechr-tempo-service
-    app: tempo-{{$releasename}}-app
+    app.kubernetes.io/component: vechr-tempo
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.tempo.image.tag}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      svc: vechr-tempo-service
-      app: tempo-{{$releasename}}-app
+      app.kubernetes.io/component: vechr-tempo
+      app.kubernetes.io/name: tempo
+      app.kubernetes.io/part-of: vechr-monitoring
   template:
     metadata:
       name: tempo-{{$releasename}}
       labels:
-        svc: vechr-tempo-service
-        app: tempo-{{$releasename}}-app
+        app.kubernetes.io/component: vechr-tempo
+        app.kubernetes.io/name: tempo
+        app.kubernetes.io/part-of: vechr-monitoring
     spec:
       restartPolicy: {{.Values.tempo.image.restartPolicy | default "Always"}}
       containers:

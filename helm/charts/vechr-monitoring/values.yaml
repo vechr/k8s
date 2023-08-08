@@ -22,7 +22,7 @@ grafana:
   port: 3000
   image:
     name: grafana/grafana
-    tag: latest
+    tag: 10.0.3
     imagePullPolicy: "Always"
     restartPolicy: "Always"
   env:
@@ -176,9 +176,6 @@ tempo:
       protocol: TCP
     - name: jaeger-grpc
       containerPort: 14250
-      protocol: TCP
-    - name: tempo
-      containerPort: 3200
       protocol: TCP
     - name: tempo-grpc
       containerPort: 9095
