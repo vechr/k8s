@@ -24,6 +24,10 @@ nodeExporter:
     mountPropagation: None
     enabled: true
 
+alertmanager:
+  enabled: true
+  replicas: 2
+
 prometheus:
   enabled: true
   replicas: 3
@@ -33,7 +37,6 @@ prometheus:
     name: quay.io/prometheus/prometheus
     tag: 2.45.0
 
-  alertmanagers: []
   podMonitorSelector: {}
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}

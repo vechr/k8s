@@ -15,7 +15,11 @@ metadata:
   namespace: {{$namespace}}
 spec:
   alerting:
-    alertmanagers: {{.Values.prometheus.alertmanagers}}
+    alertmanagers:
+    - apiVersion: v2
+      name: alertmanager-{{$releasename}}
+      namespace: {{$namespace}}
+      port: web
   enableFeatures: {{.Values.prometheus.enableFeatures}}
   externalLabels: {}
   image: {{.Values.prometheus.image.name}}:v{{.Values.prometheus.image.tag}}
