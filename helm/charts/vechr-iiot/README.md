@@ -26,8 +26,7 @@ Have problem ? [Submit an Issue](https://github.com/vechr/k8s/issues)
 NAME          	URL 
 vechr          	https://helm.vechr.com/helm/charts/
 
-> kubectl create namespace production
-> helm install vechr-production vechr/vechr-iiot -n production
+> helm install vechr-production vechr/vechr-iiot -n production --create-namespace
 ```
 
 ## Persistence Data
