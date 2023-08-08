@@ -1,0 +1,23 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.nodeExporter.enabled}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-exporter
+    app.kubernetes.io/name: node-exporter
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: 1.6.1
+  name: node-exporter-{{$releasename}}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: node-exporter-{{$releasename}}
+subjects:
+- kind: ServiceAccount
+  name: node-exporter-{{$releasename}}
+  namespace: {{$namespace}}
+
+{{end}}

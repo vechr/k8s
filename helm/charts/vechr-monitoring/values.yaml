@@ -3,6 +3,27 @@
 crds:
   enabled: true
 
+nodeExporter:
+  enabled: true
+
+  hostSysFsMount:
+    # Defines how new mounts in existing mounts on the node or in the container
+    # are propagated to the container or node, respectively. Possible values are
+    # None, HostToContainer, and Bidirectional. If this field is omitted, then
+    # None is used. More information on:
+    # https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+    mountPropagation: None
+    enabled: true
+
+  hostRootFsMount:
+    # Defines how new mounts in existing mounts on the node or in the container
+    # are propagated to the container or node, respectively. Possible values are
+    # None, HostToContainer, and Bidirectional. If this field is omitted, then
+    # None is used. More information on:
+    # https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+    mountPropagation: None
+    enabled: true
+
 prometheus:
   enabled: true
   replicas: 3
@@ -13,6 +34,14 @@ prometheus:
     tag: 2.45.0
 
   alertmanagers: []
+  podMonitorSelector: {}
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector: {}
+  probeNamespaceSelector: {}
+  probeSelector: {}
+  ruleNamespaceSelector: {}
+  ruleSelector: {}
+
 
   serviceAccount:
     name: vechr-prometheus

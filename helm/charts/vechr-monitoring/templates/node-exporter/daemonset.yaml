@@ -1,0 +1,137 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.nodeExporter.enabled}}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-exporter
+    app.kubernetes.io/name: node-exporter
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: 1.6.1
+  name: node-exporter-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-exporter
+      app.kubernetes.io/name: node-exporter
+      app.kubernetes.io/part-of: vechr-monitoring
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: node-exporter
+      labels:
+        app.kubernetes.io/component: vechr-exporter
+        app.kubernetes.io/name: node-exporter
+        app.kubernetes.io/part-of: vechr-monitoring
+        app.kubernetes.io/version: 1.6.1
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - --web.listen-address=127.0.0.1:9100
+        {{if .Values.nodeExporter.hostSysFsMount.enabled}}
+        - --path.sysfs=/host/sys
+        {{end}}
+        {{if .Values.nodeExporter.hostRootFsMount.enabled }}
+        - --path.rootfs=/host/root
+        - --path.udev.data=/host/root/run/udev/data
+        {{end}}
+        - --no-collector.wifi
+        - --no-collector.hwmon
+        - --no-collector.btrfs
+        - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run/k3s/containerd/.+|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
+        - --collector.netclass.ignored-devices=^(veth.*|[a-f0-9]{15})$
+        - --collector.netdev.device-exclude=^(veth.*|[a-f0-9]{15})$
+        image: quay.io/prometheus/node-exporter:v1.6.1
+        name: node-exporter-{{$releasename}}
+        resources:
+          limits:
+            cpu: 250m
+            memory: 180Mi
+          requests:
+            cpu: 102m
+            memory: 180Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add:
+            - SYS_TIME
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+        volumeMounts:
+        {{if .Values.nodeExporter.hostSysFsMount.enabled}}
+        - mountPath: /host/sys
+          mountPropagation: {{.Values.nodeExporter.hostSysFsMount.mountPropagation | default "HostToContainer"}}
+          name: sys
+          readOnly: true
+        {{end}}
+        {{- if .Values.nodeExporter.hostRootFsMount.enabled }}
+        - mountPath: /host/root
+          mountPropagation:  {{.Values.nodeExporter.hostRootFsMount.mountPropagation | default "HostToContainer"}}
+          name: root
+          readOnly: true
+        {{- end}}
+      - args:
+        - --logtostderr
+        - --secure-listen-address=[$(IP)]:9100
+        - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - --upstream=http://127.0.0.1:9100/
+        env:
+        - name: IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        image: quay.io/brancz/kube-rbac-proxy:v0.14.2
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: 9100
+          hostPort: 9100
+          name: https
+        resources:
+          limits:
+            cpu: 20m
+            memory: 40Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65532
+      hostNetwork: true
+      hostPID: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-cluster-critical
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+      serviceAccountName: node-exporter-{{$releasename}}
+      tolerations:
+      - operator: Exists
+      volumes:
+      {{if .Values.nodeExporter.hostSysFsMount.enabled}}
+      - hostPath:
+          path: /sys
+        name: sys
+      {{end}}
+      {{if .Values.nodeExporter.hostRootFsMount.enabled }}
+      - hostPath:
+          path: /
+        name: root
+      {{end}}
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 10%
+    type: RollingUpdate
+
+{{end}}

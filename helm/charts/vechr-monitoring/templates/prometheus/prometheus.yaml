@@ -28,22 +28,22 @@ spec:
       app.kubernetes.io/name: prometheus
       app.kubernetes.io/part-of: vechr-monitoring
       app.kubernetes.io/version: {{.Values.prometheus.image.tag}}
-  podMonitorSelector: {}
-  probeNamespaceSelector: {}
-  probeSelector: {}
+  podMonitorSelector: {{(toYaml .Values.prometheus.podMonitorSelector | indent 4)}}
+  probeNamespaceSelector: {{(toYaml .Values.prometheus.probeNamespaceSelector | indent 4)}}
+  probeSelector: {{(toYaml .Values.prometheus.probeSelector | indent 4)}}
   replicas: {{.Values.prometheus.replicas}}
   resources:
     requests:
       memory: 400Mi
-  ruleNamespaceSelector: {}
-  ruleSelector: {}
+  ruleNamespaceSelector:  {{(toYaml .Values.prometheus.ruleNamespaceSelector | indent 4)}}
+  ruleSelector: {{(toYaml .Values.prometheus.ruleSelector | indent 4)}}
   securityContext:
     fsGroup: 2000
     runAsNonRoot: true
     runAsUser: 1000
   serviceAccountName: {{.Values.prometheus.serviceAccount.name}}
-  serviceMonitorNamespaceSelector: {}
-  serviceMonitorSelector: {}
+  serviceMonitorNamespaceSelector: {{(toYaml .Values.prometheus.serviceMonitorNamespaceSelector | indent 4)}}
+  serviceMonitorSelector: {{(toYaml .Values.prometheus.serviceMonitorSelector | indent 4)}}
   version: {{.Values.prometheus.image.tag}}
 
 {{end}}
