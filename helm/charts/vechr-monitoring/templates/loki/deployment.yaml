@@ -1,5 +1,6 @@
 {{$namespace := include "vechr.namespace" .}}
 {{$releasename := include "vechr.releasename" .}}
+{{if .Values.loki.enabled}}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -47,3 +48,4 @@ spec:
           configMap:
             name: config-loki
 
+{{end}}

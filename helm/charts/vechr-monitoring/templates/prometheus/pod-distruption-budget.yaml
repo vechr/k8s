@@ -1,0 +1,25 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.prometheus.enabled}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-prometheus
+    app.kubernetes.io/instance: prometheus-{{$releasename}}
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.prometheus.image.tag}}
+  name: prometheus-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-prometheus
+      app.kubernetes.io/instance: prometheus-{{$releasename}}
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: vechr-monitoring
+
+{{end}}

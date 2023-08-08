@@ -1,0 +1,31 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.prometheus.enabled}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-prometheus
+    app.kubernetes.io/instance: prometheus-{{$releasename}}
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.prometheus.image.tag}}
+  name: prometheus-service
+  namespace: {{$namespace}}
+spec:
+  ports:
+  - name: web
+    port: 9090
+    targetPort: web
+  - name: reloader-web
+    port: 8080
+    targetPort: reloader-web
+  selector:
+    app.kubernetes.io/component: vechr-prometheus
+    app.kubernetes.io/instance: prometheus-vechr-monitoring
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: vechr-monitoring
+  sessionAffinity: ClientIP
+
+{{end}}

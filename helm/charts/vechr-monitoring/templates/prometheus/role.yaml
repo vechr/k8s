@@ -1,0 +1,45 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.prometheus.enabled}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-prometheus
+    app.kubernetes.io/instance: prometheus-{{$releasename}}
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.prometheus.image.tag}}
+  name: prometheus-{{$releasename}}
+  namespace: {{$namespace}}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+
+{{end}}

@@ -1,5 +1,6 @@
 {{$namespace := include "vechr.namespace" .}}
 {{$releasename := include "vechr.releasename" .}}
+{{if .Values.grafana.enabled}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -9,4 +10,6 @@ metadata:
 data:
   datasource.yaml: | 
     {{- toYaml .Values.grafana.datasource | nindent 6}}
+    
+{{end}}
     

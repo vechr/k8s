@@ -1,0 +1,49 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.prometheus.enabled}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-prometheus
+    app.kubernetes.io/instance: prometheus-{{$releasename}}
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.prometheus.image.tag}}
+  name: prometheus-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  egress:
+  - {}
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: prometheus
+    ports:
+    - port: 9090
+      protocol: TCP
+    - port: 8080
+      protocol: TCP
+    ports:
+    - port: 9090
+      protocol: TCP
+  - from:
+    - podSelector:
+        matchLabels:
+          app: grafana-{{$releasename}}-app
+    ports:
+    - port: 9090
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-prometheus
+      app.kubernetes.io/instance: prometheus-{{$releasename}}
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: vechr-monitoring
+  policyTypes:
+  - Egress
+  - Ingress
+
+{{end}}

@@ -1,5 +1,6 @@
 {{$namespace := include "vechr.namespace" .}}
 {{$releasename := include "vechr.releasename" .}}
+{{if .Values.tempo.enabled}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -9,4 +10,6 @@ metadata:
 data:
   config.yaml: |
     {{- toYaml .Values.tempo.config | nindent 6}}
+
+{{end}}
     

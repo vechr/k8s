@@ -1,5 +1,6 @@
 {{$namespace := include "vechr.namespace" .}}
 {{$releasename := include "vechr.releasename" .}}
+{{if .Values.grafana.enabled}}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,3 +47,4 @@ spec:
           configMap:
             name: datasource-grafana
 
+{{end}}

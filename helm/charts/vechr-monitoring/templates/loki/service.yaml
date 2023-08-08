@@ -1,3 +1,5 @@
+{{if .Values.loki.enabled}}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +15,5 @@ spec:
     - port: 3100
       name: loki-port
       targetPort: 3100
+
+{{end}}

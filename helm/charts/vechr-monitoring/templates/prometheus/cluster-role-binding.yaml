@@ -1,0 +1,24 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.prometheus.enabled}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-prometheus
+    app.kubernetes.io/instance: prometheus-{{$releasename}}
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.prometheus.image.tag}}
+  name: prometheus-{{$releasename}}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-{{$releasename}}
+subjects:
+- kind: ServiceAccount
+  name: {{.Values.prometheus.serviceAccount.name}}
+  namespace: {{$namespace}}
+
+{{end}}

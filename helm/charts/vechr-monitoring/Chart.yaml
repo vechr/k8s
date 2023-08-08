@@ -8,10 +8,15 @@ keywords:
 - IoT
 
 type: application
-version: 0.0.1
+version: 0.0.2
 home: https://github.com/vechr/k8s
 maintainers:
   - name: zulfikar
     url: https://github.com/zulfikar4568
     email: isnaen70@gmail.com
 icon: https://raw.githubusercontent.com/vechr/k8s/master/images/vechrk8s.svg
+
+dependencies:
+  - name: crds
+    version: "0.0.0"
+    condition: crds.enabled

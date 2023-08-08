@@ -1,5 +1,6 @@
 {{$namespace := include "vechr.namespace" .}}
 {{$releasename := include "vechr.releasename" .}}
+{{if .Values.tempo.enabled}}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -48,3 +49,5 @@ spec:
         - name: config-tempo-volume
           configMap:
             name: config-tempo
+
+{{end}}

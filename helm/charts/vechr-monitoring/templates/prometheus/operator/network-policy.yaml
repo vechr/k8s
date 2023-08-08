@@ -1,0 +1,35 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.prometheus.enabled}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-prometheus-operator
+    app.kubernetes.io/name: vechr-prometheus-operator
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: 0.66.0
+  name: prometheus-operator-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  egress:
+  - {}
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: vechr-prometheus
+    ports:
+    - port: 8443
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-prometheus-operator
+      app.kubernetes.io/name: vechr-prometheus-operator
+      app.kubernetes.io/part-of: vechr-monitoring
+  policyTypes:
+  - Egress
+  - Ingress
+
+{{end}}

@@ -1,0 +1,30 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.prometheus.enabled}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-prometheus-operator
+    app.kubernetes.io/name: vechr-prometheus-operator
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: 0.66.0
+  name: prometheus-operator-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  endpoints:
+  - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    honorLabels: true
+    port: https
+    scheme: https
+    tlsConfig:
+      insecureSkipVerify: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-prometheus-operator
+      app.kubernetes.io/name: vechr-prometheus-operator
+      app.kubernetes.io/part-of: vechr-monitoring
+      app.kubernetes.io/version: 0.66.0
+
+{{end}}

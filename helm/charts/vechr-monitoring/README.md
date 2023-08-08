@@ -7,6 +7,5 @@
 NAME          	URL 
 vechr          	https://helm.vechr.com/helm/charts/
 
-> kubectl create namespace monitoring
-> helm install vechr-monitoring vechr/vechr-monitoring -n monitoring
+> helm install vechr-monitoring vechr/vechr-monitoring -n monitoring --create-namespace
 ```

@@ -1,0 +1,26 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.prometheus.enabled}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-prometheus-operator
+    app.kubernetes.io/name: vechr-prometheus-operator
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: 0.66.0
+  name: prometheus-operator-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  clusterIP: None
+  ports:
+  - name: https
+    port: 8443
+    targetPort: https
+  selector:
+    app.kubernetes.io/component: vechr-prometheus-operator
+    app.kubernetes.io/name: vechr-prometheus-operator
+    app.kubernetes.io/part-of: vechr-monitoring
+
+{{end}}
