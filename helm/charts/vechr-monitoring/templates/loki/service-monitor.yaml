@@ -1,0 +1,25 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.loki.enabled}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.loki.image.tag}}
+  name: loki-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  endpoints:
+  - interval: 15s
+    port: loki-port
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-loki
+      app.kubernetes.io/name: loki
+      app.kubernetes.io/part-of: vechr-monitoring
+
+{{end}}

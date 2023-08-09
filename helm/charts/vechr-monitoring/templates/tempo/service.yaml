@@ -6,12 +6,20 @@ metadata:
   name: tempo-service
   namespace: {{ include "vechr.namespace" . }}
   labels:
-    svc: vechr-tempo-service
+    app.kubernetes.io/component: vechr-tempo
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.tempo.image.tag}}
 spec:
   type: ClusterIP
   selector:
-    svc: vechr-tempo-service
+    app.kubernetes.io/component: vechr-tempo
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/part-of: vechr-monitoring
   ports:
+    - name: tempo-port
+      port: 3200
+      targetPort: 3200
     {{range $i, $port := .Values.tempo.ports}}
     - name: {{$port.name}}
       port: {{$port.containerPort}}

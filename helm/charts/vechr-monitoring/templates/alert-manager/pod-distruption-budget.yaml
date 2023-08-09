@@ -1,0 +1,25 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.alertmanager.enabled}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-alertmanager
+    app.kubernetes.io/instance: alertmanager-{{$releasename}}
+    app.kubernetes.io/name: alertmanager
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: 0.25.0
+  name: alertmanager-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-alertmanager
+      app.kubernetes.io/instance: alertmanager-{{$releasename}}
+      app.kubernetes.io/name: alertmanager
+      app.kubernetes.io/part-of: vechr-monitoring
+
+{{end}}

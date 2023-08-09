@@ -8,20 +8,24 @@ metadata:
   name: loki-{{$releasename}}
   namespace: {{ $namespace }}
   labels:
-    svc: vechr-loki-service
-    app: loki-{{$releasename}}-app
+    app.kubernetes.io/component: vechr-loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.loki.image.tag}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      svc: vechr-loki-service
-      app: loki-{{$releasename}}-app
+      app.kubernetes.io/component: vechr-loki
+      app.kubernetes.io/name: loki
+      app.kubernetes.io/part-of: vechr-monitoring
   template:
     metadata:
       name: loki-{{$releasename}}
       labels:
-        svc: vechr-loki-service
-        app: loki-{{$releasename}}-app
+        app.kubernetes.io/component: vechr-loki
+        app.kubernetes.io/name: loki
+        app.kubernetes.io/part-of: vechr-monitoring
     spec:
       restartPolicy: {{.Values.loki.image.restartPolicy | default "Always"}}
       containers:

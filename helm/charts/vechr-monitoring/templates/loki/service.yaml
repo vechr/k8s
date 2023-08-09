@@ -6,11 +6,16 @@ metadata:
   name: loki-service
   namespace: {{ include "vechr.namespace" . }}
   labels:
-    svc: vechr-loki-service
+    app.kubernetes.io/component: vechr-loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.loki.image.tag}}
 spec:
   type: ClusterIP
   selector:
-    svc: vechr-loki-service
+    app.kubernetes.io/component: vechr-loki
+    app.kubernetes.io/name: loki
+    app.kubernetes.io/part-of: vechr-monitoring
   ports:
     - port: 3100
       name: loki-port

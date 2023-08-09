@@ -8,20 +8,24 @@ metadata:
   name: grafana-{{$releasename}}
   namespace: {{ $namespace }}
   labels:
-    svc: vechr-grafana-service
-    app: grafana-{{$releasename}}-app
+    app.kubernetes.io/component: vechr-grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.grafana.image.tag}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      svc: vechr-grafana-service
-      app: grafana-{{$releasename}}-app
+      app.kubernetes.io/component: vechr-grafana
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/part-of: vechr-monitoring
   template:
     metadata:
       name: grafana-{{$releasename}}
       labels:
-        svc: vechr-grafana-service
-        app: grafana-{{$releasename}}-app
+        app.kubernetes.io/component: vechr-grafana
+        app.kubernetes.io/name: grafana
+        app.kubernetes.io/part-of: vechr-monitoring
     spec:
       restartPolicy: {{.Values.grafana.image.restartPolicy | default "Always"}}
       containers:

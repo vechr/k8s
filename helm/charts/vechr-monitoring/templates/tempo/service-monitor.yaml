@@ -1,0 +1,25 @@
+{{$namespace := include "vechr.namespace" .}}
+{{$releasename := include "vechr.releasename" .}}
+{{if .Values.tempo.enabled}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/component: vechr-tempo
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/part-of: vechr-monitoring
+    app.kubernetes.io/version: {{.Values.tempo.image.tag}}
+  name: tempo-{{$releasename}}
+  namespace: {{$namespace}}
+spec:
+  endpoints:
+  - interval: 15s
+    port: tempo-port
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-tempo
+      app.kubernetes.io/name: tempo
+      app.kubernetes.io/part-of: vechr-monitoring
+
+{{end}}

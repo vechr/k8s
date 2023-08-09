@@ -3,6 +3,35 @@
 crds:
   enabled: true
 
+kubeStateMetrics:
+  enabled: true
+  replicas: 1
+
+nodeExporter:
+  enabled: true
+
+  hostSysFsMount:
+    # Defines how new mounts in existing mounts on the node or in the container
+    # are propagated to the container or node, respectively. Possible values are
+    # None, HostToContainer, and Bidirectional. If this field is omitted, then
+    # None is used. More information on:
+    # https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+    mountPropagation: None
+    enabled: true
+
+  hostRootFsMount:
+    # Defines how new mounts in existing mounts on the node or in the container
+    # are propagated to the container or node, respectively. Possible values are
+    # None, HostToContainer, and Bidirectional. If this field is omitted, then
+    # None is used. More information on:
+    # https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+    mountPropagation: None
+    enabled: true
+
+alertmanager:
+  enabled: true
+  replicas: 2
+
 prometheus:
   enabled: true
   replicas: 3
@@ -12,7 +41,14 @@ prometheus:
     name: quay.io/prometheus/prometheus
     tag: 2.45.0
 
-  alertmanagers: []
+  podMonitorSelector: {}
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector: {}
+  probeNamespaceSelector: {}
+  probeSelector: {}
+  ruleNamespaceSelector: {}
+  ruleSelector: {}
+
 
   serviceAccount:
     name: vechr-prometheus
@@ -22,7 +58,7 @@ grafana:
   port: 3000
   image:
     name: grafana/grafana
-    tag: latest
+    tag: 10.0.3
     imagePullPolicy: "Always"
     restartPolicy: "Always"
   env:
@@ -176,9 +212,6 @@ tempo:
       protocol: TCP
     - name: jaeger-grpc
       containerPort: 14250
-      protocol: TCP
-    - name: tempo
-      containerPort: 3200
       protocol: TCP
     - name: tempo-grpc
       containerPort: 9095
