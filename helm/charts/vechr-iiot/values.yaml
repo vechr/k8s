@@ -350,12 +350,21 @@ natsSelfSigned:
 nats:
   enabled: true
 
+  # reference a common CA Certificate or Bundle in all nats config `tls` blocks and nats-box contexts
+  # note: `tls.verify` still must be set in the appropriate nats config `tls` blocks to require mTLS
+  tlsCA:
+    enabled: true
+    secretName: nats-ca
+    dir: /etc/nats-cert/ca
+    key: ca.crt
+
   service:
     enabled: false
 
   config:
     cluster:
       enabled: true
+      port: 6222
       replicas: 3
 
       tls:
@@ -374,6 +383,7 @@ nats:
           size: 5Gi
 
     nats:
+      port: 4222
       tls:
         enabled: true
         # set secretName in order to mount an existing secret to dir
@@ -385,6 +395,7 @@ nats:
 
     mqtt:
       enabled: true
+      port: 1883
       tls:
         enabled: true
         # set secretName in order to mount an existing secret to dir
@@ -414,8 +425,16 @@ nats:
         same_origin: false
         allowed_origins: []
 
+    monitor:
+      enabled: true
+      port: 8222
+      tls:
+        # config.nats.tls must be enabled also
+        # when enabled, monitoring port will use HTTPS with the options from config.nats.tls
+        enabled: false
+
   natsbox:
-    enabled: true
+    enabled: false
 
   podTemplate:
     topologySpreadConstraints:
