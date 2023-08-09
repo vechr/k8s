@@ -3,6 +3,10 @@
 crds:
   enabled: true
 
+kubeStateMetrics:
+  enabled: true
+  replicas: 1
+
 nodeExporter:
   enabled: true
 
