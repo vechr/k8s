@@ -1,11 +1,26 @@
 namespaceOverride: ""
+######################################################## Config for CERT MANAGER ###########################################################
+certmanager:
+  # Will Override TLS Ingresses in above configuration
+  ingressTLS:
+    enabled: false
+    issuer:
+      name: letsencrypt-vechr
+      email: admin@vechr.com
+    name: nginx-vechr-cert-ingress
+    hosts: 
+      - app.vechr.com
+
 ########################################################### Config for Ingress ############################################################
 ingress:
   name: vechr-ingress
   enabled: true
   ingressClassName: nginx
 
-  # Will used this TLS if we not enabled cert manager ingress TLS, but you need enabled tls.enabled: true
+  # Will used this TLS if we not enabled cert manager ingress TLS, but you need enabled `ingress.tls.enabled: true`
+  # Usually used this if you want to use your self-signed certificate
+  # But if you want to running in cloud just disable this TLS
+  #
   tls:
     enabled: true # enable for tls
     secretName: nginx-vechr-cert-dev # if you using development
@@ -447,20 +462,24 @@ nginx:
   enabled: true
 
 ###################################################### Config for Metrics Server ###########################################################
-metricsServer:
+metrics-server:
   enabled: true
+  args:
+    - "--kubelet-insecure-tls"
 
-######################################################## Config for CERT MANAGER ###########################################################
-certmanager:
-  # Will Override TLS Ingresses in above configuration
-  ingressTLS:
+  metrics:
+    enabled: true
+
+  # Make sure you install Prometheus CRDs first
+  # Or you install https://artifacthub.io/packages/helm/vechr/vechr-monitoring this will install prometheus CRDs
+  #
+  serviceMonitor:
     enabled: false
-    issuer:
-      name: letsencrypt-vechr
-      email: admin@vechr.com
-    name: nginx-vechr-cert-ingress
-    hosts: 
-      - app.vechr.com
+    additionalLabels: {}
+    interval: 1m
+    scrapeTimeout: 10s
+    metricRelabelings: []
+    relabelings: []
 
 ######################################################## Config for GKE ###########################################################
 gke:
@@ -471,6 +490,8 @@ gke:
     # Your address static ip
     staticIP: vechr-iiot-asia-southeast2-prod-ingress-ip
 
+  # You need to assign load balancer IP, please check your Load balancer IP after you provisioning the GKE instance 
+  # Note: It might be need some cost to enabled it
   nats:
     loadBalancerIP: "34.101.60.90"
 
@@ -495,7 +516,10 @@ serviceExternal:
 
 ################################################## Config for Postgresql (Bitnami) #########################################################
 postgresql:
+  # If you enable, then all service will pointing to internal postgresql
+  # But if you disable then all service will pointing to service external
   enabled: true
+
   auth:
     postgresPassword: "vechr123"
     username: "vechrUser"
@@ -506,9 +530,12 @@ postgresql:
 
 ################################################## Config for InfluxDB #########################################################
 influx:
+  # If you enable, then all service will pointing to internal influxdb
+  # But if you disable then all service will pointing to service external
+  enabled: true
+
   name: influxdb
   replicas: 2
-  enabled: true
   deployment:
     image: influxdb
     tag: 2.1.0-alpine
