@@ -3,6 +3,38 @@ entries:
   vechr-iiot:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2023-08-10T04:01:52.383779043Z"
+    dependencies:
+    - condition: nats.enabled
+      name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 1.0.0
+    - condition: nginx.enabled
+      name: nginx-ingress
+      repository: https://helm.nginx.com/stable
+      version: 0.15.2
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.1.6
+    description: Helm Chart for Vechr Kubernetes
+    digest: eadb3bd6c8c8262b0e186964ff8b66853a88a55a1e519b4c369bab8aa08b95ff
+    home: https://github.com/vechr/k8s
+    icon: https://raw.githubusercontent.com/vechr/k8s/master/images/vechrk8s.svg
+    keywords:
+    - Vechr
+    - IoT
+    maintainers:
+    - email: isnaen70@gmail.com
+      name: zulfikar
+      url: https://github.com/zulfikar4568
+    name: vechr-iiot
+    type: application
+    urls:
+    - https://github.com/vechr/k8s/releases/download/vechr-iiot-1.0.2/vechr-iiot-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2023-08-09T18:47:15.050629157Z"
     dependencies:
     - condition: nats.enabled
@@ -293,4 +325,4 @@ entries:
     urls:
     - https://github.com/vechr/k8s/releases/download/vechr-monitoring-0.0.1/vechr-monitoring-0.0.1.tgz
     version: 0.0.1
-generated: "2023-08-09T18:47:15.050657059Z"
+generated: "2023-08-10T04:01:52.383812744Z"
