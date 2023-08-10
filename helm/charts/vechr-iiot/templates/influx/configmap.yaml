@@ -6,7 +6,11 @@ metadata:
   name: {{ default "influxdb" .Values.influx.name }}-config
   namespace: {{ include "vechr.namespace" . }}
   labels:
-    app: {{ default "influxdb" .Values.influx.name }}
+    app.kubernetes.io/component: vechr-influxdb
+    app.kubernetes.io/instance: {{ default "influxdb" .Values.influx.name }}
+    app.kubernetes.io/name: influxdb
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{ default "2.1.0-alpine" .Values.influx.deployment.tag }}
 data:
   DOCKER_INFLUXDB_INIT_MODE: {{ default "setup" .Values.influx.influx.mode }}
   DOCKER_INFLUXDB_INIT_USERNAME: {{ default "admin" .Values.influx.auth.username }}

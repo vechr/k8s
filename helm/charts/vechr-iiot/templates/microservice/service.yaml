@@ -4,7 +4,10 @@ metadata:
   name: vechr-microservice-service
   namespace: {{ include "vechr.namespace" . }}
   labels:
-    svc: vechr-app-service
+    app.kubernetes.io/component: vechr-microservice
+    app.kubernetes.io/instance: vechr-microservice-service
+    app.kubernetes.io/name: microservice
+    app.kubernetes.io/part-of: vechr-iiot
   annotations:
     {{if $.Values.gke.enabled}}
     cloud.google.com/backend-config: '{"default": "vechr-backend-config"}'
@@ -12,7 +15,9 @@ metadata:
 spec:
   type: NodePort
   selector:
-    svc: vechr-app-service
+    app.kubernetes.io/component: vechr-microservice
+    app.kubernetes.io/name: microservice
+    app.kubernetes.io/part-of: vechr-iiot
   ports:
     - port: 81
       name: "port-nothing"

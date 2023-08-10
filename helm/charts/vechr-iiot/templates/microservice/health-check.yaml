@@ -3,6 +3,11 @@
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
+  labels:
+    app.kubernetes.io/component: vechr-microservice
+    app.kubernetes.io/instance: vechr-backend-config
+    app.kubernetes.io/name: microservice
+    app.kubernetes.io/part-of: vechr-iiot
   name: vechr-backend-config
   namespace: {{ include "vechr.namespace" . }}
 spec:

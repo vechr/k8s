@@ -8,7 +8,11 @@ metadata:
   name: vechr-microservice-{{$value.name}}-hpa
   namespace: {{ $namespace }}
   labels:
-    app: vechr-service-{{$value.name}}-app
+    app.kubernetes.io/component: vechr-microservice
+    app.kubernetes.io/instance: vechr-microservice-{{$value.name}}-hpa
+    app.kubernetes.io/name: microservice
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{$value.tag}}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

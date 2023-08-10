@@ -6,13 +6,20 @@ metadata:
   name: {{ default "influxdb" .Values.influx.name }}
   namespace: {{ include "vechr.namespace" . }}
   labels:
-    app: {{ default "influxdb" .Values.influx.name }}
+    app.kubernetes.io/component: vechr-influxdb
+    app.kubernetes.io/instance: {{ default "influxdb" .Values.influx.name }}
+    app.kubernetes.io/name: influxdb
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{ default "2.1.0-alpine" .Values.influx.deployment.tag }}
 spec:
   serviceName: {{ default "influxdb" .Values.influx.name }}-service
   replicas: {{ default 1 .Values.influx.replicas }}
   selector:
     matchLabels:
-      app: {{ default "influxdb" .Values.influx.name }}
+      app.kubernetes.io/component: vechr-influxdb
+      app.kubernetes.io/instance: {{ default "influxdb" .Values.influx.name }}
+      app.kubernetes.io/name: influxdb
+      app.kubernetes.io/part-of: vechr-iiot
   volumeClaimTemplates:
     - metadata:
         name: {{ default "influxdb" .Values.influx.name }}-pvc
@@ -27,7 +34,11 @@ spec:
     metadata:
       name: {{ default "influxdb" .Values.influx.name }}
       labels:
-        app: {{ default "influxdb" .Values.influx.name }}
+        app.kubernetes.io/component: vechr-influxdb
+        app.kubernetes.io/instance: {{ default "influxdb" .Values.influx.name }}
+        app.kubernetes.io/name: influxdb
+        app.kubernetes.io/part-of: vechr-iiot
+        app.kubernetes.io/version: {{ default "2.1.0-alpine" .Values.influx.deployment.tag }}
     spec:
       containers:
         - name: {{ default "influxdb" .Values.influx.name }}

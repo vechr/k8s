@@ -8,7 +8,10 @@ metadata:
   name: {{$value.name}}
   namespace: {{ $namespace }}
   labels:
-    name: {{$value.name}}
+    app.kubernetes.io/component: vechr-external-service
+    app.kubernetes.io/instance: vechr-external-service-{{$value.name}}
+    app.kubernetes.io/name: external-service
+    app.kubernetes.io/part-of: vechr-iiot
 spec:
   type: ExternalName
   externalName: {{$value.externalName}}

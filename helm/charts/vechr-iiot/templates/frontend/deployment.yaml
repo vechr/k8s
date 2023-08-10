@@ -6,17 +6,27 @@ metadata:
   name: vechr-frontend-{{ .Values.frontend.name }}
   namespace: {{ include "vechr.namespace" . }}
   labels:
-    app: vechr-frontend-{{ .Values.frontend.name }}
+    app.kubernetes.io/component: vechr-frontend
+    app.kubernetes.io/instance: vechr-frontend-{{ .Values.frontend.name }}
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{.Values.frontend.tag}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vechr-frontend-{{ .Values.frontend.name }}
+      app.kubernetes.io/component: vechr-frontend
+      app.kubernetes.io/instance: vechr-frontend-{{ .Values.frontend.name }}
+      app.kubernetes.io/name: frontend
   template:
     metadata:
       name: vechr-frontend-{{ .Values.frontend.name }}
       labels:
-        app: vechr-frontend-{{ .Values.frontend.name }}
+        app.kubernetes.io/component: vechr-frontend
+        app.kubernetes.io/instance: vechr-frontend-{{ .Values.frontend.name }}
+        app.kubernetes.io/name: frontend
+        app.kubernetes.io/part-of: vechr-iiot
+        app.kubernetes.io/version: {{.Values.frontend.tag}}
     spec:
       restartPolicy: Always
       containers:

@@ -6,11 +6,18 @@ metadata:
   name: {{ default "influxdb" .Values.influx.name }}-service
   namespace: {{ include "vechr.namespace" . }}
   labels:
-    app: {{ default "influxdb" .Values.influx.name }}
+    app.kubernetes.io/component: vechr-influxdb
+    app.kubernetes.io/instance: {{ default "influxdb" .Values.influx.name }}
+    app.kubernetes.io/name: influxdb
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{ default "2.1.0-alpine" .Values.influx.deployment.tag }}
 spec:
   type: ClusterIP
   selector:
-    app: {{ default "influxdb" .Values.influx.name }}
+    app.kubernetes.io/component: vechr-influxdb
+    app.kubernetes.io/instance: {{ default "influxdb" .Values.influx.name }}
+    app.kubernetes.io/name: influxdb
+    app.kubernetes.io/part-of: vechr-iiot
   ports:
     - protocol: TCP
       name: http

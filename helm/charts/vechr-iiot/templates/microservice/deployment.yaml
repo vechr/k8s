@@ -24,20 +24,28 @@ metadata:
   name: vechr-microservice-{{$value.name}}
   namespace: {{ $namespace }}
   labels:
-    svc: vechr-app-service
-    app: vechr-service-{{$value.name}}-app
+    app.kubernetes.io/component: vechr-microservice
+    app.kubernetes.io/instance: vechr-microservice-{{$value.name}}
+    app.kubernetes.io/name: microservice
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{$value.tag}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      svc: vechr-app-service
-      app: vechr-service-{{$value.name}}-app
+      app.kubernetes.io/component: vechr-microservice
+      app.kubernetes.io/instance: vechr-microservice-{{$value.name}}
+      app.kubernetes.io/name: microservice
+      app.kubernetes.io/part-of: vechr-iiot
   template:
     metadata:
       name: vechr-microservice-service
       labels:
-        svc: vechr-app-service
-        app: vechr-service-{{$value.name}}-app
+        app.kubernetes.io/component: vechr-microservice
+        app.kubernetes.io/instance: vechr-microservice-{{$value.name}}
+        app.kubernetes.io/name: microservice
+        app.kubernetes.io/part-of: vechr-iiot
+        app.kubernetes.io/version: {{$value.tag}}
     spec:
       restartPolicy: Always
       containers:

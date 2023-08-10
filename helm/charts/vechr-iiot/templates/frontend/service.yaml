@@ -1,0 +1,27 @@
+{{if .Values.frontend.enabled}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vechr-frontend-{{ .Values.frontend.name }}
+  namespace: {{ include "vechr.namespace" . }}
+  labels:
+    app.kubernetes.io/component: vechr-frontend
+    app.kubernetes.io/instance: vechr-frontend-{{ .Values.frontend.name }}
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{.Values.frontend.tag}}
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/component: vechr-frontend
+    app.kubernetes.io/instance: vechr-frontend-{{ .Values.frontend.name }}
+    app.kubernetes.io/name: frontend
+  ports:
+    - protocol: TCP
+      name: http
+      port: {{ .Values.frontend.externalPort }}
+      targetPort:  {{ .Values.frontend.port }}
+      nodePort: {{ .Values.frontend.nodePort }}
+
+{{end}}
