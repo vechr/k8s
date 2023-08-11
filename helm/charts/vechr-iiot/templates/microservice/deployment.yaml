@@ -14,6 +14,14 @@
 {{$postgrePort := .Values.postgresql.containerPorts.postgresql}}
 {{/* >>>>>>>> This is variable for PostgreSQL <<<<<<<<< */}}
 
+{{/* >>>>>>>> This is variable for Monitoring <<<<<<<<< */}}
+{{$isMonitoringEnabled := .Values.monitoring.enabled}}
+{{$lokiHost :=  .Values.monitoring.loki.host}}
+{{$lokiUsername :=  .Values.monitoring.loki.username}}
+{{$lokiPassword :=  .Values.monitoring.loki.password}}
+{{$otlpHost := .Values.monitoring.otlp.host}}
+{{/* >>>>>>>> This is variable for Monitoring <<<<<<<<< */}}
+
 {{$secretNameTLS := .Values.natsSelfSigned.secretName}}
 {{range $i, $value := .Values.microservices | default dict}}
 {{if $value.enabled}}
@@ -56,10 +64,50 @@ spec:
             - name: http
               containerPort: {{$value.externalPort}}
               protocol: TCP
+            - name: metrics
+              containerPort: 8081
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{$value.externalPort}}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{$value.externalPort}}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 30
+          startupProbe:
+            httpGet:
+              path: /health
+              port: {{$value.externalPort}}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 30
           {{ end }}
           imagePullPolicy: {{$value.imagePullPolicy | default "Always"}}
           {{ if $value.env}}
           env:
+            {{ if $isMonitoringEnabled }}
+            - name: LOKI_HOST
+              value: {{ $lokiHost | default ""}}
+            - name: LOKI_USERNAME
+              value:  {{ $lokiUsername | default ""}}
+            - name: LOKI_PASSWORD
+              value:  {{ $lokiPassword | default ""}}
+            - name: OTLP_HTTP_URL
+              value:  {{ $otlpHost | default ""}}
+            {{ end }}
             - name: NATS_CA
               value: "/certificate/ca.crt"
             - name: NATS_KEY

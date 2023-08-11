@@ -92,6 +92,28 @@ ingress:
           path: /
           port: 80
         
+############################################################ Config for Monitoring ##########################################################
+# Before you enabled the monitoring, you need to install vechr monitoring
+# helm install vechr-monitoring vechr/vechr-monitoring -n monitoring --create-namespace
+# or visit this artifacthub https://artifacthub.io/packages/helm/vechr/vechr-monitoring
+#
+monitoring:
+  enabled: true
+
+  loki:
+    host: http://loki-service.monitoring.svc.cluster.local:3100
+    username:
+    password:
+  
+  otlp:
+    host: http://tempo-service.monitoring.svc.cluster.local:4318/v1/traces
+
+  podMonitor:
+    # Namespace of your monitoring system
+    namespace: monitoring
+    # Job Label
+    jobLabel: ""
+    podTargetLabels: []
 ############################################################ Config for Frontend ############################################################
 frontend:
   name: web-app
@@ -493,7 +515,7 @@ gke:
   # You need to assign load balancer IP, please check your Load balancer IP after you provisioning the GKE instance 
   # Note: It might be need some cost to enabled it
   nats:
-    loadBalancerIP: "34.101.60.90"
+    loadBalancerIP: "34.101.112.48"
 
 ##################################################### Config for Service External #########################################################
 serviceExternal:
