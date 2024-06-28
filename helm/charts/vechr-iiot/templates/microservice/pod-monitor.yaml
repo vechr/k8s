@@ -1,0 +1,34 @@
+{{ if .Values.monitoring.enabled }}
+{{$namespace := include "vechr.namespace" .}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: vechr-microservice-pod-monitor
+  labels:
+    app.kubernetes.io/component: vechr-microservice
+    app.kubernetes.io/instance: vechr-microservice-pod-monitor
+    app.kubernetes.io/name: microservice
+    app.kubernetes.io/part-of: vechr-iiot
+  namespace: {{ .Values.monitoring.podMonitor.namespace | default $namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-microservice
+      app.kubernetes.io/name: microservice
+      app.kubernetes.io/part-of: vechr-iiot
+  {{ if .Values.monitoring.jobLabel }}
+  jobLabel: {{ .Values.monitoring.jobLabel }}
+  {{ end }}
+  {{ if .Values.monitoring.podMonitor.podTargetLabels }}
+  podTargetLabels:
+    {{ toYaml .Values.monitoring.podMonitor.podTargetLabels | default list }}
+  {{ end }}
+  namespaceSelector:
+    matchNames:
+    -  {{ include "vechr.namespace" . }}
+  podMetricsEndpoints:
+  - interval: 10s 
+    port: metrics
+
+{{ end }}

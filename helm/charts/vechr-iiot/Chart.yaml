@@ -32,3 +32,8 @@ dependencies:
     version: 12.1.6
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
+
+  - name: metrics-server
+    version: 3.11.0
+    repository: https://kubernetes-sigs.github.io/metrics-server/
+    condition: metrics-server.enabled
