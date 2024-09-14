@@ -45,20 +45,6 @@ influx:
 microservices:
   -
     enabled: true
-    name: audit-service
-    
-    ... please refer to default yaml
-
-    # you need this setup this!
-    db:
-      serviceName: postgres-service 
-      username: vechrUser
-      password: vechr123
-      port: 5432
-
-    ... please refer to default yaml
-  -
-    enabled: true
     name: auth-service
 
     ... please refer to default yaml
@@ -129,6 +115,11 @@ serviceExternal:
       externalName: host.docker.internal # You need pointing into your influx host db
       ports:
         - port: 8086 # You need pointing into your influx port
+    - name: redis-ext-service # you need this setup this!
+      enabled: true
+      externalName: host.docker.internal # You need pointing into your redis host db
+      ports:
+        - port: 6379 # You need pointing into your redis port
 ```
 
 ### You run with option external influxdb and postgres locally and you have docker.

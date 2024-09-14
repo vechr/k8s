@@ -1,6 +1,12 @@
 {{$namespace := include "vechr.namespace" .}}
 {{$releasename := include "vechr.releasename" .}}
 
+{{/* >>>>>>>> This is variable for Redis <<<<<<<<< */}}
+{{$isRedisInternalEnabled := .Values.redis.enabled}}
+{{$redisName := .Values.redis.name}}
+{{$redisPort := .Values.redis.deployment.port}}
+{{/* >>>>>>>> This is variable for Redis <<<<<<<<< */}}
+
 {{/* >>>>>>>> This is variable for Influx <<<<<<<<< */}}
 {{$isInfluxInternalEnabled := .Values.influx.enabled}}
 {{$influxName := .Values.influx.name}}
@@ -98,6 +104,8 @@ spec:
           imagePullPolicy: {{$value.imagePullPolicy | default "Always"}}
           {{ if $value.env}}
           env:
+            - name: APP_NAME
+              value: {{ $value.name}}
             {{ if $isMonitoringEnabled }}
             - name: LOKI_HOST
               value: {{ $lokiHost | default ""}}
@@ -118,6 +126,17 @@ spec:
               value: "nats://nats-lb.{{$namespace}}.svc.cluster.local:4222"
             - name: APP_PORT
               value: {{$value.externalPort | quote }}
+            {{if $value.redis}}
+            - name: REDIS_TTL
+              value: "300"
+            {{if $isRedisInternalEnabled}}
+            - name: REDIS_URL
+              value: "redis://{{$redisName}}-service.{{$namespace}}.svc.cluster.local:{{$redisPort}}"
+            {{else}}
+            - name: REDIS_URL
+              value: "redis://{{$value.redis.serviceName}}.{{$namespace}}.svc.cluster.local:{{$value.redis.port}}"
+            {{end}}
+            {{end}}
             {{if $value.influx}}
             {{if $isInfluxInternalEnabled}}
             - name: INFLUX_URL

@@ -1,0 +1,39 @@
+{{if .Values.redis.enabled}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+metadata:
+  name: {{ default "redis" .Values.redis.name }}
+  namespace: {{ include "vechr.namespace" . }}
+  labels:
+    app.kubernetes.io/component: vechr-redis
+    app.kubernetes.io/instance: {{ default "redis" .Values.redis.name }}
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{ default "latest" .Values.redis.deployment.tag }}
+spec:
+  replicas: {{ default 1 .Values.redis.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: vechr-redis
+      app.kubernetes.io/instance: {{ default "redis" .Values.redis.name }}
+      app.kubernetes.io/name: redis
+      app.kubernetes.io/part-of: vechr-iiot
+  template:
+    metadata:
+      name: {{ default "redis" .Values.redis.name }}
+      labels:
+        app.kubernetes.io/component: vechr-redis
+        app.kubernetes.io/instance: {{ default "redis" .Values.redis.name }}
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/part-of: vechr-iiot
+        app.kubernetes.io/version: {{ default "latest" .Values.redis.deployment.tag }}
+    spec:
+      containers:
+        - name: {{ default "redis" .Values.redis.name }}
+          image: {{ default "redis" .Values.redis.deployment.image }}:{{ default "latest" .Values.redis.deployment.tag }}
+          imagePullPolicy: "IfNotPresent"
+          ports:
+          - containerPort: {{ default 6379 .Values.redis.deployment.port }}
+{{end}}

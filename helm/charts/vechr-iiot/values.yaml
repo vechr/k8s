@@ -1,5 +1,7 @@
 namespaceOverride: ""
+#
 ######################################################## Config for CERT MANAGER ###########################################################
+#
 certmanager:
   # Will Override TLS Ingresses in above configuration
   ingressTLS:
@@ -10,8 +12,9 @@ certmanager:
     name: nginx-vechr-cert-ingress
     hosts: 
       - app.vechr.com
-
+#
 ########################################################### Config for Ingress ############################################################
+#
 ingress:
   name: vechr-ingress
   enabled: true
@@ -34,64 +37,31 @@ ingress:
     -
       host: app.vechr.com
       services:
-        # backend audit
-        -
-          name: vechr-microservice-service
-          path: /api/v2/audit
-          port: 3004
-        -
-          name: vechr-microservice-service
-          path: /api/v1/audit
-          port: 3004
-        -
-          name: vechr-microservice-service
-          path: /api/audit
-          port: 3004
         # backend auth
         -
           name: vechr-microservice-service
-          path: /api/v2/auth
+          path: /api/auth/v1
           port: 3005
         -
           name: vechr-microservice-service
-          path: /api/v1/auth
+          path: /api/auth/docs
           port: 3005
-        -
-          name: vechr-microservice-service
-          path: /api/auth
-          port: 3005
-        # backend notification
-        -
-          name: vechr-microservice-service
-          path: /api/v2/notification
-          port: 3002
-        -
-          name: vechr-microservice-service
-          path: /api/v1/notification
-          port: 3002
-        -
-          name: vechr-microservice-service
-          path: /api/notification
-          port: 3002
         # backend things
         -
           name: vechr-microservice-service
-          path: /api/v2/things
+          path: /api/things/v1
           port: 3001
         -
           name: vechr-microservice-service
-          path: /api/v1/things
-          port: 3001
-        -
-          name: vechr-microservice-service
-          path: /api/things
+          path: /api/things/docs
           port: 3001
         # frontend
         -
           name: vechr-frontend-web-app
           path: /
           port: 80
-        
+
+#        
 ############################################################ Config for Monitoring ##########################################################
 # Before you enabled the monitoring, you need to install vechr monitoring
 # helm install vechr-monitoring vechr/vechr-monitoring -n monitoring --create-namespace
@@ -114,7 +84,10 @@ monitoring:
     # Job Label
     jobLabel: ""
     podTargetLabels: []
+
+#
 ############################################################ Config for Frontend ############################################################
+#
 frontend:
   name: web-app
   image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/web-app
@@ -137,57 +110,15 @@ frontend:
       memory: "1024Mi"
       cpu: "1"
 
+#
 ######################################################### Config for Microservices ########################################################
+#
 microservices:
-  -
-    enabled: true
-    name: audit-service
-    image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/audit-service
-    tag: latest
-
-    # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
-    imagePullPolicy: Always
-
-    # these will be passed as environment variables
-    env:
-      - name: JWT_SECRET
-        value: "secretvechr"
-      - name: ECRYPTED_SECRET
-        value: "usersecret"
-      - name: JWT_EXPIRES_IN
-        value: "3d"
-
-    databaseName: audit_db
-
-    # Will not use if enabled the postgresql in below config! IMPORTANT!
-    db:
-      serviceName: postgres-service
-      username: vechrUser
-      password: vechr123
-      port: 5432
-
-    externalPort: 3004
-    nodePort: 30036
-
-    # Resource
-    resources:
-      requests:
-        memory: "300Mi"
-        cpu: "300m"
-      limits:
-        memory: "1024Mi"
-        cpu: "1"
-
-    hpa:
-      enabled: false
-      minReplicas: 1
-      maxReplicas: 2
-      averageUtilization: 70
   -
     enabled: true
     name: auth-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/auth-service
-    tag: latest
+    tag: v1.3.1
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -205,7 +136,13 @@ microservices:
       - name: INITIAL_SITE
         value: '{"code":"ST1","name":"Site Default","location":"Server Default"}'
       - name: INITIAL_SUPERUSER
-        value: '{"fullName":"root","username": "root","emailAddress":"root@vechr.id","phoneNumber":"+62","password":"password123"}'
+        value: '{"fullName":"Administrator","name": "admin","email":"admin@vechr.com","phoneNumber":"+62","password":"admin"}'
+      - name: COOKIE_SAME_SITE
+        value: "none"
+      - name: COOKIE_SECURE
+        value: true
+      - name: COOKIE_HTTP_ONLY
+        value: true
 
     databaseName: auth_db
 
@@ -215,6 +152,11 @@ microservices:
       username: vechrUser
       password: vechr123
       port: 5432
+    
+    # Will not use if enabled the redis in below config! IMPORTANT!
+    redis:
+      serviceName: redis-ext-service
+      port: 6379
 
     externalPort: 3005
     nodePort: 30037
@@ -237,7 +179,7 @@ microservices:
     enabled: true
     name: db-logger-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/db-logger-service
-    tag: latest
+    tag: v1.4.3
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -283,7 +225,7 @@ microservices:
     enabled: true
     name: notification-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/notification-service
-    tag: latest
+    tag: v1.2.3
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -304,15 +246,6 @@ microservices:
     smtp:
       serviceName: gmail-service
       port: 587
-
-    databaseName: notification_db
-
-    # Will not use if enabled the postgresql in below config! IMPORTANT!
-    db:
-      serviceName: postgres-service
-      username: vechrUser
-      password: vechr123
-      port: 5432
 
     externalPort: 3002
     nodePort: 30039
@@ -335,7 +268,7 @@ microservices:
     enabled: true
     name: things-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/things-service
-    tag: latest
+    tag: v1.3.1
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -348,6 +281,14 @@ microservices:
         value: "usersecret"
       - name: JWT_EXPIRES_IN
         value: "3d"
+      - name: JWT_REFRESH_EXPIRES_IN
+        value: "30d"
+      - name: COOKIE_SAME_SITE
+        value: "none"
+      - name: COOKIE_SECURE
+        value: true
+      - name: COOKIE_HTTP_ONLY
+        value: true
 
     databaseName: things_db
 
@@ -357,6 +298,11 @@ microservices:
       username: vechrUser
       password: vechr123
       port: 5432
+
+    # Will not use if enabled the redis in below config! IMPORTANT!
+    redis:
+      serviceName: redis-ext-service
+      port: 6379
 
     externalPort: 3001
     nodePort: 30040
@@ -375,7 +321,8 @@ microservices:
       minReplicas: 1
       maxReplicas: 2
       averageUtilization: 70
-  
+
+#  
 ############################################################# Config for NATS #############################################################
 # Required for NATS TLS
 natsSelfSigned:
@@ -479,11 +426,15 @@ nats:
         maxSkew: 1
         whenUnsatisfiable: DoNotSchedule
 
+#
 ############################################################# Config for NGINX #############################################################
+#
 nginx:
   enabled: true
 
+#
 ###################################################### Config for Metrics Server ###########################################################
+#
 metrics-server:
   enabled: true
   args:
@@ -503,7 +454,9 @@ metrics-server:
     metricRelabelings: []
     relabelings: []
 
+#
 ######################################################## Config for GKE ###########################################################
+#
 gke:
   enabled: false
   ingress:
@@ -517,7 +470,9 @@ gke:
   nats:
     loadBalancerIP: "34.101.112.48"
 
+#
 ##################################################### Config for Service External #########################################################
+#
 serviceExternal:
   services:
     - name: gmail-service
@@ -535,8 +490,15 @@ serviceExternal:
       externalName: host.docker.internal
       ports:
         - port: 8086
+    - name: redis-ext-service
+      enabled: true
+      externalName: host.docker.internal
+      ports:
+        - port: 6379
 
+#
 ################################################## Config for Postgresql (Bitnami) #########################################################
+#
 postgresql:
   # If you enable, then all service will pointing to internal postgresql
   # But if you disable then all service will pointing to service external
@@ -550,7 +512,9 @@ postgresql:
   containerPorts:
     postgresql: 5432
 
+#
 ################################################## Config for InfluxDB #########################################################
+#
 influx:
   # If you enable, then all service will pointing to internal influxdb
   # But if you disable then all service will pointing to service external
@@ -570,3 +534,18 @@ influx:
   auth:
     username: admin
     password: vehcr123
+
+#
+################################################## Config for Redis #########################################################
+#
+redis:
+  # If you enable, then all service will pointing to internal redis
+  # But if you disable then all service will pointing to service external
+  enabled: true
+
+  name: redis
+  replicas: 1
+  deployment:
+    image: redis
+    tag: latest
+    port: 6379

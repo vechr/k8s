@@ -1,0 +1,27 @@
+{{if .Values.redis.enabled}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ default "redis" .Values.redis.name }}-service
+  namespace: {{ include "vechr.namespace" . }}
+  labels:
+    app.kubernetes.io/component: vechr-redis
+    app.kubernetes.io/instance: {{ default "redis" .Values.redis.name }}
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/part-of: vechr-iiot
+    app.kubernetes.io/version: {{ default "latest" .Values.redis.deployment.tag }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: vechr-redis
+    app.kubernetes.io/instance: {{ default "redis" .Values.redis.name }}
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/part-of: vechr-iiot
+  ports:
+    - protocol: TCP
+      name: http
+      port: {{ default 6379 .Values.redis.port }}
+      targetPort: 6379
+
+{{end}}
