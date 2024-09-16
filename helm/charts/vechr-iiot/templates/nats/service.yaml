@@ -15,17 +15,21 @@ spec:
     app.kubernetes.io/name: nats
   ports:
     - protocol: TCP
-      port: 4222
-      targetPort: 4222
+      port: {{ .Values.nats.config.nats.port }}
+      targetPort: {{ .Values.nats.config.nats.port }}
       name: nats
     - protocol: TCP
-      port: 1833
-      targetPort: 1833
+      port: {{ .Values.nats.config.mqtt.port }}
+      targetPort: {{ .Values.nats.config.mqtt.port }}
       name: mqtt
     - protocol: TCP
-      port: 9090
-      targetPort: 9090
+      port: {{ .Values.nats.config.websocket.port }}
+      targetPort: {{ .Values.nats.config.websocket.port }}
       name: websocket
+    - protocol: TCP
+      port: {{ .Values.nats.config.leafnodes.port }}
+      targetPort: {{ .Values.nats.config.leafnodes.port }}
+      name: leafnodes
   {{if .Values.gke.enabled}}
   loadBalancerIP: {{ .Values.gke.nats.loadBalancerIP | quote }}
   externalTrafficPolicy: Cluster

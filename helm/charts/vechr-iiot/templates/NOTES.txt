@@ -1,0 +1,45 @@
+#
+################################################################################################
+#
+
+Thank you for installing {{ .Chart.Name }}.
+If you want to contribute to this application you can visit this page https://github.com/vechr/vechr-iiot
+
+1. {{ .Release.Name }} Deployment Information:
+    - Release Name: {{ .Release.Name }}
+    - Namespace: {{ .Release.Namespace }}
+    - Chart Name: {{ .Chart.Name }}
+    - Chart Version: {{ .Chart.Version }}
+
+2. Useful Commands:
+    - Check the {{ .Release.Name }} Deployment Status:
+      $ helm status {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+    - Get Detailed Information about the NGINX Deployment:
+      $ helm get all {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+3. Accessing the application:
+    - https://{{ .Values.appHost }} (if you enabled the tls)
+      or
+    - http://{{ .Values.appHost }}
+
+4. Setting the application:
+   Then you need to configure the settings in your login screen, with following configuration below
+      - Backend Server: https://{{ .Values.appHost }} (if tls enabled) or http://{{ .Values.appHost }}
+      - NATS Server: wss://{{ .Values.natsHost }}:{{ .Values.nats.config.websocket.port }} (if tls enabled) or ws://{{ .Values.natsHost }}:{{ .Values.nats.config.websocket.port }}
+      - NATS Username: {{ .Values.nats.config.websocket.merge.authorization.username }}
+      - NATS Password: {{ .Values.nats.config.websocket.merge.authorization.password }}
+
+5. Join the Leaf Nodes, you need enabled first the leaf nodes.
+      - NATS leafnodes enabled: {{ .Values.nats.config.leafnodes.enabled }}
+      - NATS leafnodes port: {{ .Values.nats.config.leafnodes.port }}
+      - NATS leafnodes TLS: {{ .Values.nats.config.leafnodes.tls.enabled }}
+      - NATS leafnodes user: {{ .Values.nats.config.leafnodes.merge.authorization.user }}
+      - NATS leafnodes password: {{ .Values.nats.config.leafnodes.merge.authorization.password }}
+
+6. Clean Up:
+   - To uninstall/delete the {{ .Release.Name }} deployment, run:
+     $ helm delete {{ .Release.Name }} -n {{ .Release.Namespace }}
+#
+################################################################################################
+#
