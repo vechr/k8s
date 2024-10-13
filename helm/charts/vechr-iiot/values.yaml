@@ -93,7 +93,7 @@ monitoring:
 frontend:
   name: web-app
   image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/web-app
-  tag: v1.4.0
+  tag: v1.4.1
   enabled: true
 
   # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
