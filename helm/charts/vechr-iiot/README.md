@@ -18,6 +18,7 @@ Have problem ? [Submit an Issue](https://github.com/vechr/k8s/issues)
 ```
 
 ### Install Vehcr IIoT application
+
 ```sh
 > helm repo add vechr https://helm.vechr.com/helm/charts/
 > helm repo update
@@ -26,6 +27,8 @@ Have problem ? [Submit an Issue](https://github.com/vechr/k8s/issues)
 NAME          	URL 
 vechr          	https://helm.vechr.com/helm/charts/
 
+> # If you enabled the monitoring you need to install vechr-monitoring
+> helm install vechr-monitoring vechr/vechr-monitoring -n monitoring --create-namespace # optional
 > helm install vechr-iiot vechr/vechr-iiot -n production --create-namespace
 ```
 
