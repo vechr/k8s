@@ -439,6 +439,30 @@ entries:
     version: 0.0.1
   vechr-monitoring:
   - apiVersion: v2
+    appVersion: 0.0.2
+    created: "2024-10-26T12:53:58.361590219Z"
+    dependencies:
+    - condition: crds.enabled
+      name: crds
+      repository: ""
+      version: 0.0.0
+    description: Helm Chart for Vechr Monitoring in Kubernetes
+    digest: 5e7a2953d194ca406328831a3e5ba99d099cd1b6046477289f88a6403d6f1d99
+    home: https://github.com/vechr/k8s
+    icon: https://raw.githubusercontent.com/vechr/k8s/master/images/vechrk8s.svg
+    keywords:
+    - Vechr
+    - IoT
+    maintainers:
+    - email: isnaen70@gmail.com
+      name: zulfikar
+      url: https://github.com/zulfikar4568
+    name: vechr-monitoring
+    type: application
+    urls:
+    - https://github.com/vechr/k8s/releases/download/vechr-monitoring-0.0.4/vechr-monitoring-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
     appVersion: 0.0.1
     created: "2023-08-09T11:07:24.94441825Z"
     dependencies:
@@ -505,4 +529,4 @@ entries:
     urls:
     - https://github.com/vechr/k8s/releases/download/vechr-monitoring-0.0.1/vechr-monitoring-0.0.1.tgz
     version: 0.0.1
-generated: "2024-10-26T11:35:56.213040941Z"
+generated: "2024-10-26T12:53:58.361632878Z"
