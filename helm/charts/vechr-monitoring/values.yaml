@@ -58,7 +58,7 @@ grafana:
   port: 3000
   image:
     name: grafana/grafana
-    tag: 10.0.3
+    tag: latest
     imagePullPolicy: "Always"
     restartPolicy: "Always"
   env:
@@ -141,6 +141,7 @@ grafana:
 
 # you can find more information in here
 # https://grafana.com/docs/loki/latest/configuration/
+
 loki:
   enabled: true
   port: 3100
