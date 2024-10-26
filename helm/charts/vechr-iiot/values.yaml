@@ -93,7 +93,7 @@ monitoring:
 frontend:
   name: web-app
   image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/web-app
-  tag: v1.4.1
+  tag: v1.4.2
   enabled: true
 
   # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
@@ -120,7 +120,7 @@ microservices:
     enabled: true
     name: auth-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/auth-service
-    tag: v1.3.1
+    tag: v1.3.2
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -174,14 +174,14 @@ microservices:
 
     hpa:
       enabled: false
-      minReplicas: 1
-      maxReplicas: 2
+      minReplicas: 2
+      maxReplicas: 4
       averageUtilization: 70
   -
     enabled: true
     name: db-logger-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/db-logger-service
-    tag: v1.4.3
+    tag: v1.4.4
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -220,14 +220,14 @@ microservices:
 
     hpa:
       enabled: true
-      minReplicas: 1
-      maxReplicas: 2
+      minReplicas: 2
+      maxReplicas: 6
       averageUtilization: 70
   -
     enabled: true
     name: notification-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/notification-service
-    tag: v1.2.3
+    tag: v1.2.4
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -270,7 +270,7 @@ microservices:
     enabled: true
     name: things-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/things-service
-    tag: v1.3.1
+    tag: v1.3.2
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -389,14 +389,19 @@ nats:
 
     jetstream:
       enabled: true
+
       fileStore:
+        enabled: true
+        dir: /data
+
         pvc:
-          size: 5Gi
+          enabled: true
+          size: 6Gi
 
       memoryStore:
         enabled: true
         # ensure that container has a sufficient memory limit greater than maxSize
-        maxSize: 1Gi
+        maxSize: 2Gi
 
     nats:
       port: 4222
@@ -408,19 +413,18 @@ nats:
         cert: tls.crt
         key: tls.key
         ca: ca.crt
-
-    mqtt:
+        
+    leafnodes:
       enabled: true
-      port: 1883
+      port: 7422
       tls:
-        enabled: true
-        # set secretName in order to mount an existing secret to dir
-        secretName: nats-vechr-cert
-        dir: /etc/nats-certs/mqtt
-        cert: tls.crt
-        key: tls.key
-        ca: ca.crt
-
+        enabled: false
+      
+      merge:
+        authorization:
+          user: "nats_leaf"
+          password: "n4ts_l34f_s3cr3t"
+    
     websocket:
       enabled: true
       port: 9090
@@ -443,6 +447,18 @@ nats:
         authorization:
           username: "nats_user"
           password: "nats_s3cr3t"
+      
+    mqtt:
+      enabled: true
+      port: 1883
+      tls:
+        enabled: true
+        # set secretName in order to mount an existing secret to dir
+        secretName: nats-vechr-cert
+        dir: /etc/nats-certs/mqtt
+        cert: tls.crt
+        key: tls.key
+        ca: ca.crt
 
     monitor:
       enabled: true
@@ -451,17 +467,42 @@ nats:
         # config.nats.tls must be enabled also
         # when enabled, monitoring port will use HTTPS with the options from config.nats.tls
         enabled: false
-    
-    leafnodes:
+
+  promExporter:
+    enabled: true
+    image:
+      repository: natsio/prometheus-nats-exporter
+      tag: 0.15.0
+      pullPolicy:
+      registry:
+
+    port: 7777
+    # env var map, see nats.env for an example
+    env: {}
+
+    # merge or patch the container
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#container-v1-core
+    merge: {}
+    patch: []
+
+    ############################################################
+    # prometheus pod monitor
+    ############################################################
+    podMonitor:
       enabled: true
-      port: 7422
-      tls:
-        enabled: false
-      
+
+      # merge or patch the pod monitor
+      # https://prometheus-operator.dev/docs/api-reference/api/#monitoring.coreos.com/v1.PodMonitor
       merge:
-        authorization:
-          user: "nats_leaf"
-          password: "n4ts_l34f_s3cr3t"
+        metadata:
+          namespace: monitoring
+        spec:
+          namespaceSelector:
+            matchNames:
+            - production
+      patch: []
+      # defaults to "{{ include "nats.fullname" $ }}"
+      name:
 
   natsbox:
     enabled: false
