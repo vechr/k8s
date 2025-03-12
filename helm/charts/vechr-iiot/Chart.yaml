@@ -8,7 +8,7 @@ keywords:
 - IoT
 
 type: application
-version: 1.3.0
+version: 1.4.0
 home: https://github.com/vechr/k8s
 maintainers:
   - name: zulfikar

@@ -93,7 +93,7 @@ monitoring:
 frontend:
   name: web-app
   image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/web-app
-  tag: v1.4.2
+  tag: v1.5.1
   enabled: true
 
   # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
@@ -120,7 +120,7 @@ microservices:
     enabled: true
     name: auth-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/auth-service
-    tag: v1.3.2
+    tag: v1.3.3
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
