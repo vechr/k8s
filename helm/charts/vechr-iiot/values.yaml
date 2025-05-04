@@ -93,7 +93,7 @@ monitoring:
 frontend:
   name: web-app
   image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/web-app
-  tag: v1.5.1
+  tag: v1.5.2
   enabled: true
 
   # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
@@ -120,7 +120,7 @@ microservices:
     enabled: true
     name: auth-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/auth-service
-    tag: v1.3.3
+    tag: v1.3.7
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -181,7 +181,7 @@ microservices:
     enabled: true
     name: db-logger-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/db-logger-service
-    tag: v1.4.4
+    tag: v1.4.6
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -227,7 +227,7 @@ microservices:
     enabled: true
     name: notification-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/notification-service
-    tag: v1.2.4
+    tag: v1.2.7
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
@@ -270,7 +270,7 @@ microservices:
     enabled: true
     name: things-service
     image: asia-southeast2-docker.pkg.dev/vechr-iiot-389413/vechr-iiot-repository/things-service
-    tag: v1.3.2
+    tag: v2.0.1
 
     # imagePullPolicy: Always is recommended when using latest tags. Otherwise, please use IfNotPresent
     imagePullPolicy: Always
